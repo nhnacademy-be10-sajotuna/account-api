@@ -5,6 +5,7 @@ spring:
     name: account-api
   data:
     redis:
+      database: 315
       host: s4.java21.net
       port: 6379
       password: "*N2vya7H@muDTwdNMR!"

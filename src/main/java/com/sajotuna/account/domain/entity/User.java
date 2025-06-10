@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,8 +36,6 @@ public class User implements UserDetails {
     private AuthType authType;
     private LocalDateTime currentLoginAt;
 
-    @OneToMany
-    private List<Address> addresses;
 
     public User() {}
     public User(UserDto userDto, PasswordEncoder passwordEncoder) {
@@ -77,5 +76,6 @@ public class User implements UserDetails {
         LOCAL,
         PAYCO
     }
+
 
 }

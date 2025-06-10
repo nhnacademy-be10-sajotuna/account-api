@@ -8,8 +8,7 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private long userId;
     private String nickName;
     private String streetAddress;
     private String detailAddress;

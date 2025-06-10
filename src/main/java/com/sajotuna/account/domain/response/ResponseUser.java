@@ -3,9 +3,15 @@ package com.sajotuna.account.domain.response;
 import com.sajotuna.account.domain.entity.User;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
 public class ResponseUser {
     private long id;
 
@@ -14,7 +20,7 @@ public class ResponseUser {
     private String name;
     private String email;
     private String phoneNumber;
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
     private LocalDateTime createdAt;
     private User.Status status;
     private User.AuthType authType;

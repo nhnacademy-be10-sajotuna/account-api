@@ -1,7 +1,9 @@
 package com.sajotuna.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sajotuna.account.domain.dto.AddressDto;
 import com.sajotuna.account.domain.dto.UserDto;
+import com.sajotuna.account.domain.entity.Address;
 import com.sajotuna.account.domain.request.RequestUser;
 import com.sajotuna.account.domain.response.ResponseUser;
 import com.sajotuna.account.service.UserService;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

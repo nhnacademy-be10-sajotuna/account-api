@@ -2,7 +2,9 @@ package com.sajotuna.account.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dto.UserDto;
+import com.sajotuna.account.domain.entity.Address;
 import com.sajotuna.account.domain.entity.User;
+import com.sajotuna.account.exception.UserAlreadyException;
 import com.sajotuna.account.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +32,9 @@ public class UserService implements UserDetailsService {
 
     public UserDto createUser(UserDto userDto) {
         User user = new User(userDto, passwordEncoder);
+        if (userRepository.findByEmail(userDto.getEmail()) != null) {
+            throw new UserAlreadyException(userDto.getEmail());
+        }
         User saveduser = userRepository.save(user);
         return objectMapper.convertValue(saveduser, UserDto.class);
     }
