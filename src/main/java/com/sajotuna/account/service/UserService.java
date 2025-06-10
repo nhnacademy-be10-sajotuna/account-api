@@ -23,16 +23,13 @@ public class UserService implements UserDetailsService {
 
 
     public UserDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException(email);
-        }
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException(email));
         return objectMapper.convertValue(user, UserDto.class);
     }
 
     public UserDto createUser(UserDto userDto) {
         User user = new User(userDto, passwordEncoder);
-        if (userRepository.findByEmail(userDto.getEmail()) != null) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyException(userDto.getEmail());
         }
         User saveduser = userRepository.save(user);
@@ -44,10 +41,6 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return user;
+        return userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException(username));
     }
 }

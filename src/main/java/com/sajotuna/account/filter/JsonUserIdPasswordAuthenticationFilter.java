@@ -6,7 +6,6 @@ import com.sajotuna.account.domain.entity.User;
 import com.sajotuna.account.domain.request.LoginRequestUser;
 import com.sajotuna.account.domain.response.LoginResponse;
 import com.sajotuna.account.service.UserService;
-import com.sajotuna.account.util.ErrorMessage;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -16,10 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -129,13 +125,11 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
     }
 
     private void handleException(HttpServletResponse response, String message, HttpStatus status) throws IOException {
-        ErrorMessage errorMessage = new ErrorMessage(message, status);
-
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        String json = objectMapper.writeValueAsString(errorMessage);
+        String json = objectMapper.writeValueAsString(ResponseEntity.status(status).body(message));
         response.getWriter().write(json);
     }
     
