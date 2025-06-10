@@ -7,6 +7,12 @@ spring:
     url: jdbc:mysql://s4.java21.net:13306/project_be10_team4_dev?useSSL=false&serverTimezone=UTC
     username: project_be10_team4
     password: uEUklnkbk*7*_O4H
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      timeout: 2000
   jpa:
     hibernate:
       ddl-auto: update
