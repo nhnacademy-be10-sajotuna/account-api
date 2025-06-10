@@ -17,6 +17,5 @@ public class UserDto {
     private User.AuthType authType;
     private LocalDate birthDate;
     private LocalDateTime createdAt;
-    private long point;
     private LocalDateTime currentLoginAt;
 }

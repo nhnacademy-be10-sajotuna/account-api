@@ -17,7 +17,6 @@ public class ResponseUser {
     private LocalDateTime birthDate;
     private LocalDateTime createdAt;
     private User.Status status;
-    private long point;
     private User.AuthType authType;
     private LocalDateTime currentLoginAt;
 }

@@ -31,10 +31,12 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
     private Status status;
-    private long point;
     @Enumerated(EnumType.STRING)
     private AuthType authType;
     private LocalDateTime currentLoginAt;
+
+    @OneToMany
+    private List<Address> addresses;
 
     public User() {}
     public User(UserDto userDto, PasswordEncoder passwordEncoder) {
@@ -44,7 +46,6 @@ public class User implements UserDetails {
         this.password = passwordEncoder.encode(userDto.getPassword());
         this.createdAt = LocalDateTime.now();
         this.status = Status.ACTIVE;
-        this.point = 5000;
         this.birthDate = userDto.getBirthDate();
         this.authType = AuthType.LOCAL;
         this.policyId = 1;
