@@ -41,7 +41,7 @@ public class SecurityConfig {
         AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
         JsonUserIdPasswordAuthenticationFilter filter = new JsonUserIdPasswordAuthenticationFilter(userService, env, redisTemplate);
         filter.setAuthenticationManager(authenticationManager(builder));
-        filter.setFilterProcessesUrl("/login");
+        filter.setFilterProcessesUrl("/api/users/login");
         return filter;
     }
 

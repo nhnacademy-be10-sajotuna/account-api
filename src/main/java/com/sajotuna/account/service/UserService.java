@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     public UserDto getUserByEmail(String email) {
@@ -24,6 +26,12 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException(email);
         }
         return objectMapper.convertValue(user, UserDto.class);
+    }
+
+    public UserDto createUser(UserDto userDto) {
+        User user = new User(userDto, passwordEncoder);
+        User saveduser = userRepository.save(user);
+        return objectMapper.convertValue(saveduser, UserDto.class);
     }
 
 

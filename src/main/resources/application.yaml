@@ -7,7 +7,7 @@ spring:
     redis:
       host: s4.java21.net
       port: 6379
-      password: *N2vya7H@muDTwdNMR!
+      password: "*N2vya7H@muDTwdNMR!"
       timeout: 2000
 eureka:
   client:
@@ -27,4 +27,4 @@ management:
         include: health, info
 
 token:
-  secret: 1234567890
+  secret: 12345678910111213141516171819202122

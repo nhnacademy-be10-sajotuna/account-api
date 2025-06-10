@@ -1,22 +1,23 @@
-package com.sajotuna.account.domain.dto;
+package com.sajotuna.account.domain.response;
 
 import com.sajotuna.account.domain.entity.User;
-import lombok.Data;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
-public class UserDto {
+public class ResponseUser {
     private long id;
+
+    private long policyId;
+
     private String name;
-    private String password;
     private String email;
     private String phoneNumber;
-    private User.Status status;
-    private User.AuthType authType;
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
     private LocalDateTime createdAt;
+    private User.Status status;
     private long point;
+    private User.AuthType authType;
     private LocalDateTime currentLoginAt;
 }

@@ -1,17 +1,21 @@
 package com.sajotuna.account.domain.entity;
 
+import com.sajotuna.account.domain.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Data
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +27,7 @@ public class User implements UserDetails {
     private String password;
     private String email;
     private String phoneNumber;
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
     private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -31,6 +35,20 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AuthType authType;
     private LocalDateTime currentLoginAt;
+
+    public User() {}
+    public User(UserDto userDto, PasswordEncoder passwordEncoder) {
+        this.email = userDto.getEmail();
+        this.phoneNumber = userDto.getPhoneNumber();
+        this.name = userDto.getName();
+        this.password = passwordEncoder.encode(userDto.getPassword());
+        this.createdAt = LocalDateTime.now();
+        this.status = Status.ACTIVE;
+        this.point = 5000;
+        this.birthDate = userDto.getBirthDate();
+        this.authType = AuthType.LOCAL;
+        this.policyId = 1;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
