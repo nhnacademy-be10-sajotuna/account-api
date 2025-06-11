@@ -1,0 +1,23 @@
+### 회원 가입
+
+POST http://localhost:10362/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "김용재",
+  "password": "123",
+  "email": "yooh3574@naver.com",
+  "phoneNumber": "010-3574-5624",
+  "birthDate": "1996-11-14",
+  "address": "지호로 39번길"
+}
+
+### 로그인
+POST http://localhost:10362/api/users/login
+Content-Type: application/json
+
+{
+  "email": "yooh3574@naver.com",
+  "password": "123"
+}
