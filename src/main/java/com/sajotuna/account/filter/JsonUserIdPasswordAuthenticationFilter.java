@@ -36,7 +36,7 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
     private final Environment env;
     private final byte[] secretKey;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final static Long ACCESS_TOKEN_EXPIRES = 1800L;
+    private final static Long ACCESS_TOKEN_EXPIRES = 1800 * 1000L;
     private final static Long REFRESH_TOKEN_EXPIRES = 24 * 60 * 60 * 1000L;
 
     public JsonUserIdPasswordAuthenticationFilter(UserService userService, Environment env, RedisTemplate<String, Object> redisTemplate) {
