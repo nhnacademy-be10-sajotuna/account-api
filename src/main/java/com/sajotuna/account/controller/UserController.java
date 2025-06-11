@@ -30,8 +30,6 @@ public class UserController {
         UserDto savedUser = userService.createUser(userDto);
         ResponseUser responseUser = objectMapper.convertValue(savedUser, ResponseUser.class);
         return new ResponseEntity<>(responseUser, HttpStatus.CREATED);
-
-
     }
 
 

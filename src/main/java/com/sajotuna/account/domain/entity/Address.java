@@ -11,5 +11,4 @@ public class Address {
     private long userId;
     private String nickName;
     private String streetAddress;
-    private String detailAddress;
 }

@@ -9,6 +9,7 @@ spring:
     password: uEUklnkbk*7*_O4H
   data:
     redis:
+      database: 0
       host: localhost
       port: 6379
       password:
