@@ -126,10 +126,9 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
 
     private void handleException(HttpServletResponse response, String message, HttpStatus status) throws IOException {
         response.setStatus(status.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        String json = objectMapper.writeValueAsString(ResponseEntity.status(status).body(message));
+        String json = String.valueOf(ResponseEntity.status(status).body(message));
         response.getWriter().write(json);
     }
     
