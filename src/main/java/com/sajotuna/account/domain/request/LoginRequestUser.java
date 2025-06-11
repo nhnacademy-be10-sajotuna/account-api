@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class LoginRequestUser {
-    @Email
+    @Email(message = "이메일 형식이 아닙니다.")
     @NotNull(message = "이메일은 비어 있으면 안됩니다.")
     private String email;
 

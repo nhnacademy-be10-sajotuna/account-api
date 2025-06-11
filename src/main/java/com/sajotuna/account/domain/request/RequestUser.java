@@ -15,7 +15,7 @@ public class RequestUser {
     private String name;
     @NotNull(message = "비밀번호는 비어 있으면 안됩니다.")
     private String password;
-    @Email
+    @Email(message = "이메일 형식이 아닙니다.")
     @NotNull(message = "이메일은 비어 있으면 안됩니다.")
     private String email;
     @NotNull(message = "번호는 비어 있으면 안됩니다.")
