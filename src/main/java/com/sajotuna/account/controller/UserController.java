@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +31,11 @@ public class UserController {
         return new ResponseEntity<>(responseUser, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable Long userId) {
+        UserDto user = userService.getUserById(userId);
+        ResponseUser responseUser = objectMapper.convertValue(user, ResponseUser.class);
+        return new ResponseEntity<>(responseUser, HttpStatus.OK);
+    }
 
 }

@@ -75,6 +75,8 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
         claims.put("email", userDto.getEmail());
         claims.put("name", userDto.getName());
 
+        userService.updateLastLogin(username);
+
         String accessToken = getToken(claims, userDto, ACCESS_TOKEN_EXPIRES);
 
         String refreshToken = getToken(claims, userDto, REFRESH_TOKEN_EXPIRES);

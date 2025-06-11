@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class UserDto {
     private long id;
+    private long policyId;
     private String name;
     private String password;
     private String email;

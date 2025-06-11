@@ -21,3 +21,7 @@ Content-Type: application/json
   "email": "yooh3574@naver.com",
   "password": "123"
 }
+
+### 유저 찾기
+GET http://localhost:10362/api/users/22
+
