@@ -44,4 +44,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/sleep")
+    public ResponseEntity<Void> sleepUsers() {
+        userService.sleepUser();
+        return ResponseEntity.noContent().build();
+    }
+
 }

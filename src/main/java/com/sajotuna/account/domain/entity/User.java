@@ -46,6 +46,7 @@ public class User implements UserDetails {
         this.birthDate = userDto.getBirthDate();
         this.authType = AuthType.LOCAL;
         this.policyId = 1;
+        this.currentLoginAt = LocalDateTime.now();
     }
 
     @Override
