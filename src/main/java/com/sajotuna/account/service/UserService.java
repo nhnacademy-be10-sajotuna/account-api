@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
 
 
     public UserDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException(email));
+        User user = userRepository.findByEmailAndStatusNot(email, User.Status.DELETED).orElseThrow(()-> new UserNotFoundException(email));
         return objectMapper.convertValue(user, UserDto.class);
     }
 
@@ -51,11 +51,13 @@ public class UserService implements UserDetailsService {
         return objectMapper.convertValue(user, UserDto.class);
     }
 
-
-
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
+        user.setStatus(User.Status.DELETED);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).orElseThrow(()-> new UserNotFoundException(username));
+        return userRepository.findByEmailAndStatusNot(username, User.Status.DELETED).orElseThrow(()-> new UserNotFoundException(username));
     }
 }

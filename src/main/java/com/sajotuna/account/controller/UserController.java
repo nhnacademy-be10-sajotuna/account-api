@@ -28,14 +28,20 @@ public class UserController {
         UserDto userDto = objectMapper.convertValue(requestUser, UserDto.class);
         UserDto savedUser = userService.createUser(userDto);
         ResponseUser responseUser = objectMapper.convertValue(savedUser, ResponseUser.class);
-        return new ResponseEntity<>(responseUser, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ResponseUser> getUser(@PathVariable Long userId) {
+    @GetMapping("/me")
+    public ResponseEntity<ResponseUser> getUser(@RequestHeader("X-User-Id")Long userId) {
         UserDto user = userService.getUserById(userId);
         ResponseUser responseUser = objectMapper.convertValue(user, ResponseUser.class);
-        return new ResponseEntity<>(responseUser, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(responseUser);
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteUser(@RequestHeader("X-User-Id")Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
 }
