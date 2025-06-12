@@ -3,9 +3,7 @@ package com.sajotuna.account.domain.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -21,6 +19,7 @@ public class RequestUser {
     @NotNull(message = "번호는 비어 있으면 안됩니다.")
     private String phoneNumber;
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "생일을 입력하셔야 합니다.")
     private LocalDate birthDate;
     private String address;
 }

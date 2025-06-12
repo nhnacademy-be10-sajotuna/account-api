@@ -1,9 +1,6 @@
 package com.sajotuna.account.domain.response;
 
 import com.sajotuna.account.domain.entity.User;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

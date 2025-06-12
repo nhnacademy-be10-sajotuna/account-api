@@ -2,6 +2,7 @@ package com.sajotuna.account.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dooray.DoorayMessage;
+import com.sajotuna.account.domain.dto.AddressDto;
 import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.entity.Address;
 import com.sajotuna.account.domain.entity.User;
@@ -29,6 +30,7 @@ public class UserService implements UserDetailsService {
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final InActiveUserFeignClient inActiveUserFeignClient;
+    private final AddressService addressService;
 
 
     public UserDto getUserByEmail(String email) {
@@ -55,12 +57,19 @@ public class UserService implements UserDetailsService {
         user.setCurrentLoginAt(LocalDateTime.now());
     }
 
-    public UserDto createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto, String address) {
         User user = new User(userDto, passwordEncoder);
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyException(userDto.getEmail());
         }
         User saveduser = userRepository.save(user);
+        if (address != null) {
+            AddressDto addressDto = new AddressDto();
+            addressDto.setStreetAddress(address);
+            addressDto.setNickName(address);
+            addressService.save(addressDto, saveduser.getId());
+        }
+
         return objectMapper.convertValue(saveduser, UserDto.class);
     }
 
