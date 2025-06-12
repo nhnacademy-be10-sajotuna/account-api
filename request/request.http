@@ -23,5 +23,10 @@ Content-Type: application/json
 }
 
 ### 유저 찾기
-GET http://localhost:10362/api/users/22
+GET http://localhost:10362/api/users/me
+X-User-Id: 22
+
+### 유저 삭제
+DELETE http://localhost:10362/api/users/me
+X-User-Id: 22
 

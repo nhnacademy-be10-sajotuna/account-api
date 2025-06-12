@@ -107,7 +107,7 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
     private String getToken(Claims claims, UserDto userDto, Long tokenExpires) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDto.getEmail())
+                .setSubject(String.valueOf(userDto.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + tokenExpires))
                 .signWith(getSigningKey(secretKey))
