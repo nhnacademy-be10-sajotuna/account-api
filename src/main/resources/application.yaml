@@ -1,35 +1,8 @@
 spring:
   application:
     name: account-api
-  data:
-    redis:
-      database: 315
-      host: s4.java21.net
-      port: 6379
-      password: "*N2vya7H@muDTwdNMR!"
-      timeout: 2000
-server:
-  port: ${PORT:10362}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:10372/eureka/
-    healthcheck:
-      enabled: true
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,shutdown
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-
-token:
-  secret: 12345678910111213141516171819202122
+  config:
+    import: configserver:http://localhost:10379
+  cloud:
+    config:
+      label: dev
