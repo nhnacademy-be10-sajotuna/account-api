@@ -1,8 +1,5 @@
 spring:
   application:
     name: account-api
-  config:
-    import: configserver:http://localhost:10379
-  cloud:
-    config:
-      label: dev
+  profiles:
+    active: prod
