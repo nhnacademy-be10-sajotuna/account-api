@@ -12,6 +12,7 @@ import com.sajotuna.account.feign.InActiveUserFeignClient;
 import com.sajotuna.account.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,6 +32,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final InActiveUserFeignClient inActiveUserFeignClient;
     private final AddressService addressService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     public UserDto getUserByEmail(String email) {
@@ -81,6 +83,13 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
         user.setStatus(User.Status.DELETED);
+
+        redisTemplate.delete("refresh_token:"+ user.getEmail());
+    }
+
+    public void logout(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
+        redisTemplate.delete("refresh_token:"+ user.getEmail());
     }
 
     public void sleepUser() {
