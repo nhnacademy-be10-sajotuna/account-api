@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -73,6 +76,17 @@ public class UserController {
         httpServletResponse.addCookie(refreshToken);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/birth")
+    public ResponseEntity<List<ResponseUser>> getAllBirthUsers() {
+        List<ResponseUser> responseUsers = new ArrayList<>();
+        List<UserDto> users = userService.getUserByBirth();
+        for (UserDto user : users) {
+            ResponseUser responseUser = objectMapper.convertValue(user, ResponseUser.class);
+            responseUsers.add(responseUser);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseUsers);
     }
 
     @PutMapping("/sleep")
