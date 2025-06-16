@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2024.0.0</spring-cloud.version>
+		<querydsl.version>5.1.0</querydsl.version>
 	</properties>
 
 	<dependencies>
@@ -128,6 +129,26 @@
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
 
+		<!-- Querydsl -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>${querydsl.version}</version>
+			<classifier>jakarta</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${querydsl.version}</version>
+			<classifier>jakarta</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -158,15 +179,33 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version> <!-- 버전은 최신으로 적절히 -->
 				<configuration>
+					<source>21</source>  <!-- 자바 버전 -->
+					<target>21</target>
 					<annotationProcessorPaths>
+						<!-- lombok -->
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>1.18.30</version> <!-- 버전 명시 -->
+						</path>
+						<!-- querydsl-apt -->
+						<path>
+							<groupId>com.querydsl</groupId>
+							<artifactId>querydsl-apt</artifactId>
+							<version>${querydsl.version}</version>
+							<classifier>jakarta</classifier>
+						</path>
+						<path>
+							<groupId>jakarta.persistence</groupId>
+							<artifactId>jakarta.persistence-api</artifactId>
+							<version>3.1.0</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

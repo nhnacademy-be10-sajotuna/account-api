@@ -10,7 +10,6 @@ import com.sajotuna.account.exception.UserAlreadyException;
 import com.sajotuna.account.exception.UserNotFoundException;
 import com.sajotuna.account.feign.InActiveUserFeignClient;
 import com.sajotuna.account.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +17,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -90,6 +91,15 @@ public class UserService implements UserDetailsService {
     public void logout(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
         redisTemplate.delete("refresh_token:"+ user.getEmail());
+    }
+
+    public List<UserDto> getUserByBirth() {
+        List<User> users = userRepository.findUsersWithBirthdayInThisMonth();
+        List<UserDto> userDtos = new ArrayList<>();
+        for (User user : users) {
+            userDtos.add(objectMapper.convertValue(user, UserDto.class));
+        }
+        return userDtos;
     }
 
     public void sleepUser() {
