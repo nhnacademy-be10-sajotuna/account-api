@@ -24,9 +24,28 @@ Content-Type: application/json
 
 ### 유저 찾기
 GET http://localhost:10362/api/users/me
-X-User-Id: 22
+X-User-Id: 1
 
 ### 유저 삭제
 DELETE http://localhost:10362/api/users/me
-X-User-Id: 22
+X-User-Id: 1
+
+
+### 주소 추가
+POST http://localhost:10362/api/address
+Content-Type: application/json
+X-User-Id: 1
+
+{
+  "nickName": "내집",
+  "streetAddress": "일산"
+}
+
+### 주소 조회
+GET http://localhost:10362/api/address
+X-User-Id: 1
+
+### 주소 삭제
+DELETE http://localhost:10362/api/address/2
+X-User-Id: 1
 
