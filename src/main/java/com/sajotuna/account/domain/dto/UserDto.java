@@ -20,4 +20,5 @@ public class UserDto {
     private LocalDate birthDate;
     private LocalDateTime createdAt;
     private LocalDateTime currentLoginAt;
+    private User.Role role;
 }

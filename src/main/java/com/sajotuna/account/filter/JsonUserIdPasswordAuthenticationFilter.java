@@ -73,7 +73,7 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
 
         Claims claims = Jwts.claims();
         claims.put("email", userDto.getEmail());
-        claims.put("name", userDto.getName());
+        claims.put("role", userDto.getRole());
 
         userService.updateLastLogin(username);
 
