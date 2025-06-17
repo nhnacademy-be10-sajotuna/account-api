@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dooray.DoorayMessage;
 import com.sajotuna.account.domain.dto.AddressDto;
 import com.sajotuna.account.domain.dto.UserDto;
+import com.sajotuna.account.domain.dto.UserGradePolicyDto;
 import com.sajotuna.account.domain.entity.Address;
 import com.sajotuna.account.domain.entity.User;
+import com.sajotuna.account.domain.entity.UserGradePolicy;
 import com.sajotuna.account.exception.UserAlreadyException;
 import com.sajotuna.account.exception.UserNotFoundException;
 import com.sajotuna.account.feign.InActiveUserFeignClient;
+import com.sajotuna.account.repository.UserGradePolicyRepository;
 import com.sajotuna.account.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,6 +37,7 @@ public class UserService implements UserDetailsService {
     private final InActiveUserFeignClient inActiveUserFeignClient;
     private final AddressService addressService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UserGradePolicyRepository userGradePolicyRepository;
 
 
     public UserDto getUserByEmail(String email) {
@@ -61,10 +65,13 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto createUser(UserDto userDto, String address) {
-        User user = new User(userDto, passwordEncoder);
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyException(userDto.getEmail());
         }
+        User user = new User(userDto, passwordEncoder);
+        UserGradePolicy defaultUserGradePolicy = userGradePolicyRepository.findById(1L).orElse(null);
+        user.setUserGradePolicy(defaultUserGradePolicy);
+
         User saveduser = userRepository.save(user);
         if (address != null) {
             AddressDto addressDto = new AddressDto();
@@ -78,7 +85,9 @@ public class UserService implements UserDetailsService {
 
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
-        return objectMapper.convertValue(user, UserDto.class);
+        UserDto userDto = objectMapper.convertValue(user, UserDto.class);
+        userDto.setUserGradePolicyDto(new UserGradePolicyDto(user.getUserGradePolicy()));
+        return userDto;
     }
 
     public void deleteUser(Long id) {

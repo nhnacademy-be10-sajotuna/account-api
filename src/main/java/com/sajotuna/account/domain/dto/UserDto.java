@@ -1,6 +1,7 @@
 package com.sajotuna.account.domain.dto;
 
 import com.sajotuna.account.domain.entity.User;
+import com.sajotuna.account.domain.entity.UserGradePolicy;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ import java.util.List;
 @Data
 public class UserDto {
     private long id;
-    private long policyId;
+    private UserGradePolicyDto userGradePolicyDto;
     private String name;
     private String password;
     private String email;

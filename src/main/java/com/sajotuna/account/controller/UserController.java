@@ -2,8 +2,10 @@ package com.sajotuna.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dto.UserDto;
+import com.sajotuna.account.domain.dto.UserGradePolicyDto;
 import com.sajotuna.account.domain.request.RequestUser;
 import com.sajotuna.account.domain.response.ResponseUser;
+import com.sajotuna.account.domain.response.ResponseUserWithPolicy;
 import com.sajotuna.account.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,9 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ResponseUser> getUser(@RequestHeader("X-User-Id")Long userId) {
+    public ResponseEntity<ResponseUserWithPolicy> getUser(@RequestHeader("X-User-Id")Long userId) {
         UserDto user = userService.getUserById(userId);
-        ResponseUser responseUser = objectMapper.convertValue(user, ResponseUser.class);
+        ResponseUserWithPolicy responseUser = objectMapper.convertValue(user, ResponseUserWithPolicy.class);
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }
 
