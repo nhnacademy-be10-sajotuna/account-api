@@ -22,4 +22,5 @@ public class ResponseUser {
     private User.Status status;
     private User.AuthType authType;
     private LocalDateTime currentLoginAt;
+    private User.Role role;
 }

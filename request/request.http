@@ -5,11 +5,11 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "이방원",
+  "name": "이성계",
   "password": "123",
-  "email": "qwer12345@naver.com",
-  "phoneNumber": "010-3574-5624",
-  "birthDate": "1996-06-01",
+  "email": "qwer12@naver.com",
+  "phoneNumber": "010-1111-2222",
+  "birthDate": "1996-06-24",
   "address": "지호로 39번길"
 }
 
@@ -18,13 +18,13 @@ POST http://localhost:10362/api/users/login
 Content-Type: application/json
 
 {
-  "email": "yooh3574@naver.com",
+  "email": "qwer12345@naver.com",
   "password": "123"
 }
 
 ### 유저 찾기
 GET http://localhost:10362/api/users/me
-X-User-Id: 1
+X-User-Id: 2
 
 ### 유저 삭제
 DELETE http://localhost:10362/api/users/me

@@ -4,6 +4,7 @@ import com.sajotuna.account.domain.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -34,6 +35,9 @@ public class User implements UserDetails {
     private AuthType authType;
     private LocalDateTime currentLoginAt;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 
     public User() {}
     public User(UserDto userDto, PasswordEncoder passwordEncoder) {
@@ -47,11 +51,12 @@ public class User implements UserDetails {
         this.authType = AuthType.LOCAL;
         this.policyId = 1;
         this.currentLoginAt = LocalDateTime.now();
+        this.role = Role.User;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
@@ -74,6 +79,11 @@ public class User implements UserDetails {
     public enum AuthType{
         LOCAL,
         PAYCO
+    }
+
+    public enum Role{
+        User,
+        Admin
     }
 
 
