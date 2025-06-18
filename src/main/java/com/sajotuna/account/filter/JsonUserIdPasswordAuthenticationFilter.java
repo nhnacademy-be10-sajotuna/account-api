@@ -46,8 +46,6 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
         this.secretKey = env.getProperty("token.secret").getBytes(StandardCharsets.UTF_8);
     }
 
-
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (request.getContentType() == null || !request.getContentType().contains("application/json")) {
@@ -81,30 +79,11 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
         userService.updateLastLogin(username);
 
         String accessToken = getToken(claims, userDto, ACCESS_TOKEN_EXPIRES);
-
         String refreshToken = getToken(claims, userDto, REFRESH_TOKEN_EXPIRES);
-
-        ResponseCookie accessTokenCookie = getResponseCookie("access_token", accessToken, ACCESS_TOKEN_EXPIRES);
-
-        ResponseCookie refreshTokenCookie = getResponseCookie("refresh_token", refreshToken, REFRESH_TOKEN_EXPIRES);
-
         saveRefreshToken(userDto.getEmail(), refreshToken);
 
-        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
         objectMapper.writeValue(response.getOutputStream(), new LoginResponse(accessToken, refreshToken, userDto.getEmail(), userDto.getName()));
 
-    }
-
-    private ResponseCookie getResponseCookie(String tokenName, String token, Long tokenExpires) {
-        ResponseCookie accessTokenCookie = ResponseCookie.from(tokenName, token)
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(tokenExpires)
-                .sameSite("Lax")
-                .build();
-        return accessTokenCookie;
     }
 
     private String getToken(Claims claims, UserDto userDto, Long tokenExpires) {
