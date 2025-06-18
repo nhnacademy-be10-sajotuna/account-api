@@ -68,6 +68,9 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserDto userDto = userService.getUserByEmail(username);
 
@@ -96,7 +99,7 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
     private ResponseCookie getResponseCookie(String tokenName, String token, Long tokenExpires) {
         ResponseCookie accessTokenCookie = ResponseCookie.from(tokenName, token)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 .maxAge(tokenExpires)
                 .sameSite("Lax")
