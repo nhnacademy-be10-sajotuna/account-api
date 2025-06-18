@@ -21,7 +21,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private long policyId;
+    @ManyToOne
+    @JoinColumn(name = "policy_id")
+    private UserGradePolicy userGradePolicy;
 
     private String name;
     private String password;
@@ -49,7 +51,6 @@ public class User implements UserDetails {
         this.status = Status.ACTIVE;
         this.birthDate = userDto.getBirthDate();
         this.authType = AuthType.LOCAL;
-        this.policyId = 1;
         this.currentLoginAt = LocalDateTime.now();
         this.role = Role.User;
     }
