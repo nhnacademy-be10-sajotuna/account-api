@@ -1,6 +1,7 @@
 package com.sajotuna.account.config;
 
 import com.sajotuna.account.filter.JsonUserIdPasswordAuthenticationFilter;
+import com.sajotuna.account.service.TokenService;
 import com.sajotuna.account.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserService userService;
+    private final TokenService tokenService;
     private final Environment env;
     private final ObjectPostProcessor<Object> objectPostProcessor;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -39,7 +41,7 @@ public class SecurityConfig {
 
     private JsonUserIdPasswordAuthenticationFilter getAuthenticationFilter() throws Exception {
         AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
-        JsonUserIdPasswordAuthenticationFilter filter = new JsonUserIdPasswordAuthenticationFilter(userService, env, redisTemplate);
+        JsonUserIdPasswordAuthenticationFilter filter = new JsonUserIdPasswordAuthenticationFilter(userService, tokenService);
         filter.setAuthenticationManager(authenticationManager(builder));
         filter.setFilterProcessesUrl("/api/users/login");
         return filter;

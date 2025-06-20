@@ -5,6 +5,7 @@ import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.entity.User;
 import com.sajotuna.account.domain.request.LoginRequestUser;
 import com.sajotuna.account.domain.response.LoginResponse;
+import com.sajotuna.account.service.TokenService;
 import com.sajotuna.account.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,24 +27,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final Environment env;
-    private final byte[] secretKey;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final static Long ACCESS_TOKEN_EXPIRES = 1800 * 1000L;
-    private final static Long REFRESH_TOKEN_EXPIRES = 24 * 60 * 60 * 1000L;
+    private final TokenService tokenService;
 
-    public JsonUserIdPasswordAuthenticationFilter(UserService userService, Environment env, RedisTemplate<String, Object> redisTemplate) {
+    public JsonUserIdPasswordAuthenticationFilter(UserService userService, TokenService tokenService) {
         this.userService = userService;
-        this.env = env;
-        this.redisTemplate = redisTemplate;
-        this.secretKey = env.getProperty("token.secret").getBytes(StandardCharsets.UTF_8);
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -78,22 +70,12 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
 
         userService.updateLastLogin(username);
 
-        String accessToken = getToken(claims, userDto, ACCESS_TOKEN_EXPIRES);
-        String refreshToken = getToken(claims, userDto, REFRESH_TOKEN_EXPIRES);
-        saveRefreshToken(userDto.getEmail(), refreshToken);
+        String accessToken = tokenService.getAccessToken(claims, userDto);
+        String refreshToken = tokenService.getRefreshToken(claims, userDto);
+        tokenService.saveRefreshToken(userDto.getEmail(), refreshToken);
 
         objectMapper.writeValue(response.getOutputStream(), new LoginResponse(accessToken, refreshToken, userDto.getEmail(), userDto.getName()));
 
-    }
-
-    private String getToken(Claims claims, UserDto userDto, Long tokenExpires) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(String.valueOf(userDto.getId()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + tokenExpires))
-                .signWith(getSigningKey(secretKey))
-                .compact();
     }
 
     @Override
@@ -115,14 +97,4 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
         String json = String.valueOf(ResponseEntity.status(status).body(message));
         response.getWriter().write(json);
     }
-    
-    private void saveRefreshToken(String email, String refreshToken){
-        String key = "refresh_token:" + email;
-        redisTemplate.opsForValue().set(key, refreshToken, 1, TimeUnit.DAYS);
-    }
-
-    public static Key getSigningKey(byte[] secretKey) {
-        return Keys.hmacShaKeyFor(secretKey);
-    }
-
 }
