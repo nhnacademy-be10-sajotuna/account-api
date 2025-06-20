@@ -20,9 +20,6 @@ public class TokenController {
     @PostMapping
     public ResponseEntity<ResponseAccessToken> refresh(@RequestHeader("AuthorizationRefresh") String token) throws Exception {
         String refreshToken = token.substring(7);
-        if (!tokenService.validateRefreshToken(refreshToken)) {
-            throw new ForbiddenException("Invalid refresh token");
-        }
         String accessToken = tokenService.getAccessTokenFromRefreshToken(refreshToken);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseAccessToken(accessToken));
     }

@@ -31,31 +31,6 @@ public class TokenService {
         this.secretKey = env.getProperty("token.secret").getBytes(StandardCharsets.UTF_8);
     }
 
-    public boolean validateRefreshToken(String refreshToken) {
-        if (refreshToken == null) {
-            return false;
-        }
-        String email = getEmailFromToken(refreshToken);
-        String savedRefreshToken = (String) redisTemplate.opsForValue().get("refresh_token:" + email);
-        if (!refreshToken.equals(savedRefreshToken)) {
-            return false;
-        }
-        return validate(refreshToken);
-    }
-
-
-    public boolean validate(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     private String getToken(Claims claims, UserDto userDto, Long tokenExpires) {
         return Jwts.builder()
                 .setClaims(claims)
