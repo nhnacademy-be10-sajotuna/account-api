@@ -41,42 +41,14 @@ public class UserController {
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteUser(@RequestHeader("X-User-Id")Long userId, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<Void> deleteUser(@RequestHeader("X-User-Id")Long userId) {
         userService.deleteUser(userId);
-        Cookie accessToken = new Cookie("access_token", null);
-        accessToken.setMaxAge(0);
-        accessToken.setHttpOnly(true);
-        accessToken.setSecure(true);
-        accessToken.setPath("/");
-        httpServletResponse.addCookie(accessToken);
-
-        Cookie refreshToken = new Cookie("refresh_token", null);
-        refreshToken.setMaxAge(0);
-        accessToken.setHttpOnly(true);
-        accessToken.setSecure(true);
-        refreshToken.setPath("/");
-        httpServletResponse.addCookie(refreshToken);
-
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("X-User-Id")Long userId, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<Void> logout(@RequestHeader("X-User-Id")Long userId) {
         userService.logout(userId);
-        Cookie accessToken = new Cookie("access_token", null);
-        accessToken.setMaxAge(0);
-        accessToken.setHttpOnly(true);
-        accessToken.setSecure(true);
-        accessToken.setPath("/");
-        httpServletResponse.addCookie(accessToken);
-
-        Cookie refreshToken = new Cookie("refresh_token", null);
-        refreshToken.setMaxAge(0);
-        accessToken.setHttpOnly(true);
-        accessToken.setSecure(true);
-        refreshToken.setPath("/");
-        httpServletResponse.addCookie(refreshToken);
-
         return ResponseEntity.noContent().build();
     }
 
