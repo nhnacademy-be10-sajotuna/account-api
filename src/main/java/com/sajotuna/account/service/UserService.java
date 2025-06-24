@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService {
         user.setUserGradePolicy(defaultUserGradePolicy);
 
         User saveduser = userRepository.save(user);
-        if (address != null) {
+        if (address != null && !address.isBlank()) {
             AddressDto addressDto = new AddressDto();
             addressDto.setStreetAddress(address);
             addressDto.setNickName(address);
