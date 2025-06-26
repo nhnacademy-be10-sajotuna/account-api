@@ -1,6 +1,8 @@
 package com.sajotuna.account.service;
 
+import com.sajotuna.account.domain.dooray.DoorayMessage;
 import com.sajotuna.account.domain.entity.User;
+import com.sajotuna.account.feign.InActiveUserFeignClient;
 import com.sajotuna.account.feign.PaycoFeignClient;
 import com.sajotuna.account.domain.payco.PaycoUserInfoResponse;
 import com.sajotuna.account.repository.UserRepository;
@@ -29,6 +31,7 @@ public class PaycoOAuth2UserService implements OAuth2UserService<OAuth2UserReque
     private final UserRepository userRepository;
     private final PaycoFeignClient paycoFeignClient;
     private final UserGradePolicyRepository userGradePolicyRepository;
+    private final InActiveUserFeignClient inActiveUserFeignClient;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -52,6 +55,9 @@ public class PaycoOAuth2UserService implements OAuth2UserService<OAuth2UserReque
             if (email != null && name != null) {
                 User savedUser = userRepository.findByEmailAndName(email, name).orElse(null);
                 if (savedUser != null) {
+                    if (savedUser.getStatus().equals(User.Status.DELETED)) {
+                        throw new OAuth2AuthenticationException(new OAuth2Error("invalid_user_info_response", "사용자 정보 조회 실패", null));
+                    }
                     savedUser.setPaycoId(idNo);
                     savedUser.setAuthType(User.AuthType.PAYCO);
                 }
