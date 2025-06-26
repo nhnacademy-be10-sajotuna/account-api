@@ -43,16 +43,7 @@ public class UserService implements UserDetailsService {
     public UserDto getUserByEmail(String email) {
         User user = userRepository.findByEmailAndStatusNot(email, User.Status.DELETED).orElseThrow(()-> new UserNotFoundException(email));
         if (user.getStatus() == User.Status.INACTIVE) {
-            DoorayMessage doorayMessage = new DoorayMessage(
-                    "team04.shop 봇.",
-                    String.format("휴면 유저 %s",
-                    user.getEmail()),
-                    new DoorayMessage.Attachment[]{new DoorayMessage.Attachment(
-                            "인증되었습니다. ",
-                            "깨어났습니다 용사님",
-                            "http://naver.com",
-                    "https://static.dooray.com/static_images/dooray-bot.png",
-                            "red")});
+            DoorayMessage doorayMessage = new DoorayMessage("inactive", email);
             inActiveUserFeignClient.sendMessage("application/json",doorayMessage);
             user.setStatus(User.Status.ACTIVE);
         }

@@ -62,6 +62,7 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         String username = ((User) authResult.getPrincipal()).getUsername();
+
         UserDto userDto = userService.getUserByEmail(username);
 
         Claims claims = Jwts.claims();
