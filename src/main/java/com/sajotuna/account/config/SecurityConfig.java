@@ -1,6 +1,9 @@
 package com.sajotuna.account.config;
 
 import com.sajotuna.account.filter.JsonUserIdPasswordAuthenticationFilter;
+import com.sajotuna.account.handler.OAuth2LoginFailHandler;
+import com.sajotuna.account.handler.OAuth2LoginSuccessHandler;
+import com.sajotuna.account.service.PaycoOAuth2UserService;
 import com.sajotuna.account.service.TokenService;
 import com.sajotuna.account.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,9 @@ public class SecurityConfig {
     private final ObjectPostProcessor<Object> objectPostProcessor;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final PaycoOAuth2UserService paycoOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailHandler oAuth2LoginFailHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,7 +41,12 @@ public class SecurityConfig {
                 )
                 .addFilter(getAuthenticationFilter())
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable);
+                .formLogin(AbstractHttpConfigurer::disable)
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+                                .userService(paycoOAuth2UserService))
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailHandler));
         return http.build();
     }
 
