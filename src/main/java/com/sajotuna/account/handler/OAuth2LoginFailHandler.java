@@ -19,7 +19,7 @@ public class OAuth2LoginFailHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
         log.info("[OAuth2 로그인 실패] 이유: " + exception.getMessage());
-        String errorMessage = URLEncoder.encode(exception.getMessage(), StandardCharsets.UTF_8);
+        String errorMessage = URLEncoder.encode("이미 삭제된 유저입니다", StandardCharsets.UTF_8);
         response.sendRedirect("/login?errorMessage=" + errorMessage);
     }
 }
