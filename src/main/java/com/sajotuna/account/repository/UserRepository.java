@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserQuerydslR
     Optional<User> findByEmailAndStatusNot(String username, User.Status status);
     Optional<List<User>> findByStatusAndCurrentLoginAtLessThan(User.Status status, LocalDateTime date);
 
+    Optional<User> findByPaycoId(String paycoId);
+
+    Optional<User> findByEmailAndName(String email, String name);
 }
