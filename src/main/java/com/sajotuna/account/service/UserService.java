@@ -74,6 +74,16 @@ public class UserService implements UserDetailsService {
         return objectMapper.convertValue(saveduser, UserDto.class);
     }
 
+    public void updateUser(Long id, UserDto userDto) {
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
+        user.setName(userDto.getName());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setBirthDate(userDto.getBirthDate());
+        if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+    }
+
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
         UserDto userDto = objectMapper.convertValue(user, UserDto.class);
