@@ -76,15 +76,9 @@ public class UserService implements UserDetailsService {
 
     public void updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
-        if (userDto.getName() != null && !userDto.getName().isBlank()) {
-            user.setName(userDto.getName());
-        }
-        if (userDto.getPhoneNumber() != null && !userDto.getPhoneNumber().isBlank()) {
-            user.setPhoneNumber(userDto.getPhoneNumber());
-        }
-        if (userDto.getBirthDate() != null) {
-            user.setBirthDate(userDto.getBirthDate());
-        }
+        user.setName(userDto.getName());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setBirthDate(userDto.getBirthDate());
         if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
