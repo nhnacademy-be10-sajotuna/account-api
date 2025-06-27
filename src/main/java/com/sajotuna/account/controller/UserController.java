@@ -3,6 +3,7 @@ package com.sajotuna.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.dto.UserGradePolicyDto;
+import com.sajotuna.account.domain.request.RequestEditUser;
 import com.sajotuna.account.domain.request.RequestUser;
 import com.sajotuna.account.domain.response.ResponseUser;
 import com.sajotuna.account.domain.response.ResponseUserWithPolicy;
@@ -43,6 +44,13 @@ public class UserController {
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteUser(@RequestHeader("X-User-Id")Long userId) {
         userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<Void> updateUser(@RequestHeader("X-User-Id")Long userId, @Valid @RequestBody RequestEditUser editUser) {
+        UserDto userDto = objectMapper.convertValue(editUser, UserDto.class);
+        userService.updateUser(userId, userDto);
         return ResponseEntity.noContent().build();
     }
 
