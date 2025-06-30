@@ -70,11 +70,4 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseUsers);
     }
-
-    @PutMapping("/sleep")
-    public ResponseEntity<Void> sleepUsers() {
-        userService.sleepUser();
-        return ResponseEntity.noContent().build();
-    }
-
 }
