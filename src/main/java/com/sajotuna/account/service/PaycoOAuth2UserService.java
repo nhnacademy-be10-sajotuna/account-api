@@ -6,8 +6,6 @@ import com.sajotuna.account.feign.InActiveUserFeignClient;
 import com.sajotuna.account.feign.PaycoFeignClient;
 import com.sajotuna.account.domain.payco.PaycoUserInfoResponse;
 import com.sajotuna.account.repository.UserRepository;
-import com.sajotuna.account.repository.UserGradePolicyRepository;
-import com.sajotuna.account.domain.entity.UserGradePolicy;
 import com.sajotuna.account.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +28,6 @@ public class PaycoOAuth2UserService implements OAuth2UserService<OAuth2UserReque
 
     private final UserRepository userRepository;
     private final PaycoFeignClient paycoFeignClient;
-    private final UserGradePolicyRepository userGradePolicyRepository;
     private final InActiveUserFeignClient inActiveUserFeignClient;
 
     @Override
@@ -67,8 +64,6 @@ public class PaycoOAuth2UserService implements OAuth2UserService<OAuth2UserReque
                     newUser.setAuthType(User.AuthType.PAYCO);
                     newUser.setEmail(email);
                     newUser.setName(name);
-                    UserGradePolicy defaultUserGradePolicy = userGradePolicyRepository.findById(1L).orElse(null);
-                    newUser.setUserGradePolicy(defaultUserGradePolicy);
                     userRepository.save(newUser);
                 }
             }
@@ -79,8 +74,6 @@ public class PaycoOAuth2UserService implements OAuth2UserService<OAuth2UserReque
                 newUser.setName(newName);
                 email = newName +"@sajotuna.com";
                 name = newName;
-                UserGradePolicy defaultUserGradePolicy = userGradePolicyRepository.findById(1L).orElse(null);
-                newUser.setUserGradePolicy(defaultUserGradePolicy);
                 userRepository.save(newUser);
             }
         }

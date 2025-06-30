@@ -35,8 +35,15 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ResponseUserWithPolicy> getUser(@RequestHeader("X-User-Id")Long userId) {
+    public ResponseEntity<ResponseUser> getUser(@RequestHeader("X-User-Id")Long userId) {
         UserDto user = userService.getUserById(userId);
+        ResponseUser responseUser = objectMapper.convertValue(user, ResponseUser.class);
+        return ResponseEntity.status(HttpStatus.OK).body(responseUser);
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<ResponseUserWithPolicy> getUserWithPolicy(@RequestHeader("X-User-Id")Long userId) {
+        UserDto user = userService.getUserDetailById(userId);
         ResponseUserWithPolicy responseUser = objectMapper.convertValue(user, ResponseUserWithPolicy.class);
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }

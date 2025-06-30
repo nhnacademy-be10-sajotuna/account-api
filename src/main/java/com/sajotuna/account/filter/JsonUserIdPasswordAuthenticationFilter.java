@@ -9,13 +9,10 @@ import com.sajotuna.account.service.TokenService;
 import com.sajotuna.account.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.env.Environment;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -63,13 +60,11 @@ public class JsonUserIdPasswordAuthenticationFilter extends UsernamePasswordAuth
 
         String username = ((User) authResult.getPrincipal()).getUsername();
 
-        UserDto userDto = userService.getUserByEmail(username);
+        UserDto userDto = userService.getUserByEmailAfterLogin(username);
 
         Claims claims = Jwts.claims();
         claims.put("email", userDto.getEmail());
         claims.put("role", userDto.getRole());
-
-        userService.updateLastLogin(username);
 
         String accessToken = tokenService.getAccessToken(claims, userDto);
         String refreshToken = tokenService.getRefreshToken(claims, userDto);

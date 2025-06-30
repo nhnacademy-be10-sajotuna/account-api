@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 public class CookieService {
 
 
-    private static final Long ACCESS_TOKEN_EXPIRES = 1800 * 1000L;
-    private static final Long REFRESH_TOKEN_EXPIRES = 24 * 60 * 60 * 1000L;
+    private static final Long ACCESS_TOKEN_EXPIRES = 1800L;
+    private static final Long REFRESH_TOKEN_EXPIRES = 24 * 60 * 60L;
 
     @Value("${cookie.domain:}")
     private String cookieDomain;
@@ -32,25 +32,6 @@ public class CookieService {
                 .path("/")
                 .domain(cookieDomain)
                 .maxAge(tokenExpires)
-                .sameSite("Lax")
-                .build();
-    }
-
-    public ResponseCookie deleteAccessTokenCookie() {
-        return deleteCookie("access_token");
-    }
-
-    public ResponseCookie deleteRefreshTokenCookie() {
-        return deleteCookie("refresh_token");
-    }
-
-    private ResponseCookie deleteCookie(String tokenName) {
-        return ResponseCookie.from(tokenName, "")
-                .httpOnly(true)
-                .secure(cookieSecure)
-                .path("/")
-                .domain(cookieDomain)
-                .maxAge(0) // 💡 쿠키 즉시 삭제
                 .sameSite("Lax")
                 .build();
     }

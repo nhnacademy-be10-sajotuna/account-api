@@ -21,10 +21,6 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "policy_id")
-    private UserGradePolicy userGradePolicy;
-
     private String paycoId;
 
     private String name;
