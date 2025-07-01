@@ -5,13 +5,13 @@ import com.sajotuna.account.domain.dooray.DoorayMessage;
 import com.sajotuna.account.domain.dto.AddressDto;
 import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.dto.UserGradePolicyDto;
-import com.sajotuna.account.domain.entity.Address;
 import com.sajotuna.account.domain.entity.User;
-import com.sajotuna.account.domain.entity.UserGradePolicy;
+import com.sajotuna.account.domain.request.PointEarnRequest;
+import com.sajotuna.account.domain.response.ResponseUserGradePolicy;
 import com.sajotuna.account.exception.UserAlreadyException;
 import com.sajotuna.account.exception.UserNotFoundException;
 import com.sajotuna.account.feign.InActiveUserFeignClient;
-import com.sajotuna.account.repository.UserGradePolicyRepository;
+import com.sajotuna.account.feign.OrderFeignClient;
 import com.sajotuna.account.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,33 +37,31 @@ public class UserService implements UserDetailsService {
     private final InActiveUserFeignClient inActiveUserFeignClient;
     private final AddressService addressService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final UserGradePolicyRepository userGradePolicyRepository;
+    private final PointMessageProducer pointMessageProducer;
+    private final OrderFeignClient orderFeignClient;
 
 
-    public UserDto getUserByEmail(String email) {
+    public UserDto getUserByEmailAfterLogin(String email) {
         User user = userRepository.findByEmailAndStatusNot(email, User.Status.DELETED).orElseThrow(()-> new UserNotFoundException(email));
         if (user.getStatus() == User.Status.INACTIVE) {
             DoorayMessage doorayMessage = new DoorayMessage("inactive", email);
             inActiveUserFeignClient.sendMessage("application/json",doorayMessage);
             user.setStatus(User.Status.ACTIVE);
         }
+        user.setCurrentLoginAt(LocalDateTime.now());
         return objectMapper.convertValue(user, UserDto.class);
     }
 
-    public void updateLastLogin(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException(email));
-        user.setCurrentLoginAt(LocalDateTime.now());
-    }
 
     public UserDto createUser(UserDto userDto, String address) {
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyException(userDto.getEmail());
         }
         User user = new User(userDto, passwordEncoder);
-        UserGradePolicy defaultUserGradePolicy = userGradePolicyRepository.findById(1L).orElse(null);
-        user.setUserGradePolicy(defaultUserGradePolicy);
 
         User saveduser = userRepository.save(user);
+        pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
+
         if (address != null && !address.isBlank()) {
             AddressDto addressDto = new AddressDto();
             addressDto.setStreetAddress(address);
@@ -87,7 +85,14 @@ public class UserService implements UserDetailsService {
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
         UserDto userDto = objectMapper.convertValue(user, UserDto.class);
-        userDto.setUserGradePolicyDto(new UserGradePolicyDto(user.getUserGradePolicy()));
+        return userDto;
+    }
+
+    public UserDto getUserDetailById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
+        UserDto userDto = objectMapper.convertValue(user, UserDto.class);
+        ResponseUserGradePolicy responseUserGradePolicy = orderFeignClient.getUserGradePolicy(id);
+        userDto.setUserGradePolicyDto(objectMapper.convertValue(responseUserGradePolicy, UserGradePolicyDto.class));
         return userDto;
     }
 

@@ -135,6 +135,12 @@
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
 
+		<!-- Spring for RabbitMQ -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
 		<!-- Querydsl -->
 		<dependency>
 			<groupId>com.querydsl</groupId>

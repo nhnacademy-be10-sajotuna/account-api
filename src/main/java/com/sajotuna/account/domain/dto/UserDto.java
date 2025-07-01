@@ -1,7 +1,6 @@
 package com.sajotuna.account.domain.dto;
 
 import com.sajotuna.account.domain.entity.User;
-import com.sajotuna.account.domain.entity.UserGradePolicy;
 import lombok.Data;
 
 import java.time.LocalDate;

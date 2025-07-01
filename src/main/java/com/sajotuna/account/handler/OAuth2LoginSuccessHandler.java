@@ -32,14 +32,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = (String) oAuth2User.getAttributes().get("email");
 
-        UserDto userDto = userService.getUserByEmail(email);
+        UserDto userDto = userService.getUserByEmailAfterLogin(email);
 
 
         Claims claims = Jwts.claims();
         claims.put("email", userDto.getEmail());
         claims.put("role", userDto.getRole());
-
-        userService.updateLastLogin(email);
 
         String refreshToken = tokenService.getRefreshToken(claims, userDto);
         String accessToken = tokenService.getAccessToken(claims, userDto);
