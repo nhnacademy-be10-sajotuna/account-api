@@ -7,17 +7,18 @@ import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.dto.UserGradePolicyDto;
 import com.sajotuna.account.domain.entity.User;
 import com.sajotuna.account.domain.request.PointEarnRequest;
+import com.sajotuna.account.domain.response.LoginResponse;
+import com.sajotuna.account.domain.response.ResponseUser;
 import com.sajotuna.account.domain.response.ResponseUserGradePolicy;
 import com.sajotuna.account.exception.UserAlreadyException;
 import com.sajotuna.account.exception.UserNotFoundException;
 import com.sajotuna.account.feign.InActiveUserFeignClient;
 import com.sajotuna.account.feign.OrderFeignClient;
 import com.sajotuna.account.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService implements UserDetailsService {
+public class UserService{
 
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
@@ -39,25 +41,83 @@ public class UserService implements UserDetailsService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final PointMessageProducer pointMessageProducer;
     private final OrderFeignClient orderFeignClient;
+    private final TokenService tokenService;
 
-
-    public UserDto getUserByEmailAfterLogin(String email) {
+    public LoginResponse login(String email, String password) {
         User user = userRepository.findByEmailAndStatusNot(email, User.Status.DELETED).orElseThrow(()-> new UserNotFoundException(email));
-        if (user.getStatus() == User.Status.INACTIVE) {
-            DoorayMessage doorayMessage = new DoorayMessage("inactive", email);
-            inActiveUserFeignClient.sendMessage("application/json",doorayMessage);
-            user.setStatus(User.Status.ACTIVE);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new UserNotFoundException(email);
         }
+        if (user.getStatus() == User.Status.INACTIVE) {
+            AwakeInactiveUser(email, user);
+        }
+
         user.setCurrentLoginAt(LocalDateTime.now());
-        return objectMapper.convertValue(user, UserDto.class);
+
+        return makeTokenAfterLogin(user);
     }
 
+    public LoginResponse oauth2Login(String outId, String email, String name) {
+        User user = userRepository.findByOutId(outId).orElse(null);
+        if (user == null) {
+            if (email != null && name != null) {
+                User savedUser = userRepository.findByEmailAndName(email, name).orElse(null);
+                if (savedUser != null) {
+                    if (savedUser.getStatus().equals(User.Status.DELETED)) {
+                        throw new UserNotFoundException(email);
+                    }
+                    savedUser.setOutId(outId);
+                    savedUser.setAuthType(User.AuthType.PAYCO);
+                }
+                else {
+                    User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
+                    userRepository.save(newUser);
+                    user = newUser;
+                }
+            }
+            else {
+                String newName = UUID.randomUUID().toString();
+                email = newName +"@sajotuna.com";
+                User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
+                userRepository.save(newUser);
+                user = newUser;
+            }
+        }
+        else {
+            if (user.getStatus().equals(User.Status.DELETED)) {
+                throw new UserNotFoundException(email);
+            }
+        }
+
+        user.setCurrentLoginAt(LocalDateTime.now());
+        if (user.getStatus() == User.Status.INACTIVE) {
+            AwakeInactiveUser(email, user);
+        }
+
+        return makeTokenAfterLogin(user);
+    }
+
+    private void AwakeInactiveUser(String email, User user) {
+        DoorayMessage doorayMessage = new DoorayMessage("inactive", email);
+        inActiveUserFeignClient.sendMessage("application/json",doorayMessage);
+        user.setStatus(User.Status.ACTIVE);
+    }
+
+    private LoginResponse makeTokenAfterLogin(User user) {
+        Claims claims = Jwts.claims();
+
+        String accessToken = tokenService.getAccessToken(claims, user);
+        String refreshToken = tokenService.getRefreshToken(claims, user);
+
+        tokenService.saveRefreshToken(user.getId(), refreshToken);
+        return new LoginResponse(accessToken, refreshToken, user.getEmail(), user.getName());
+    }
 
     public UserDto createUser(UserDto userDto, String address) {
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyException(userDto.getEmail());
         }
-        User user = new User(userDto, passwordEncoder);
+        User user = UserDto.toUser(userDto, passwordEncoder);
 
         User saveduser = userRepository.save(user);
         pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
@@ -74,11 +134,9 @@ public class UserService implements UserDetailsService {
 
     public void updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
-        user.setName(userDto.getName());
-        user.setPhoneNumber(userDto.getPhoneNumber());
-        user.setBirthDate(userDto.getBirthDate());
+        user.update(userDto.getName(), userDto.getPhoneNumber(), userDto.getBirthDate());
         if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
-            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            user.updatePassword(passwordEncoder.encode(userDto.getPassword()));
         }
     }
 
@@ -100,12 +158,12 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
         user.setStatus(User.Status.DELETED);
 
-        redisTemplate.delete("refresh_token:"+ user.getEmail());
+        redisTemplate.delete("refresh_token:"+ user.getId());
     }
 
     public void logout(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id.toString()));
-        redisTemplate.delete("refresh_token:"+ user.getEmail());
+        redisTemplate.delete("refresh_token:"+ user.getId());
     }
 
     public List<UserDto> getUserByBirth() {
@@ -123,10 +181,5 @@ public class UserService implements UserDetailsService {
         for (User user : users) {
             user.setStatus(User.Status.INACTIVE);
         }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmailAndStatusNot(username, User.Status.DELETED).orElseThrow(()-> new UserNotFoundException(username));
     }
 }

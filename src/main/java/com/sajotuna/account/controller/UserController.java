@@ -3,8 +3,11 @@ package com.sajotuna.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.dto.UserGradePolicyDto;
+import com.sajotuna.account.domain.request.LoginRequestUser;
 import com.sajotuna.account.domain.request.RequestEditUser;
+import com.sajotuna.account.domain.request.RequestOauth2;
 import com.sajotuna.account.domain.request.RequestUser;
+import com.sajotuna.account.domain.response.LoginResponse;
 import com.sajotuna.account.domain.response.ResponseUser;
 import com.sajotuna.account.domain.response.ResponseUserWithPolicy;
 import com.sajotuna.account.service.UserService;
@@ -26,9 +29,22 @@ public class UserController {
     private final UserService userService;
     private final ObjectMapper objectMapper;
 
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequestUser requestUser) {
+        LoginResponse loginResponse = userService.login(requestUser.getEmail(), requestUser.getPassword());
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+    }
+
+    @PostMapping("/oauth2/{outId}")
+    public ResponseEntity<LoginResponse> oauth2(@PathVariable String outId, @RequestBody RequestOauth2 requestOauth2) {
+        LoginResponse loginResponse = userService.oauth2Login(outId, requestOauth2.getEmail(), requestOauth2.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+    }
+
     @PostMapping
     public ResponseEntity<ResponseUser> createUser(@Valid @RequestBody RequestUser requestUser) {
-        UserDto userDto = objectMapper.convertValue(requestUser, UserDto.class);
+        UserDto userDto = UserDto.fromRequestUserLocal(requestUser);
         UserDto savedUser = userService.createUser(userDto, requestUser.getAddress());
         ResponseUser responseUser = objectMapper.convertValue(savedUser, ResponseUser.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);

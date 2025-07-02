@@ -2,6 +2,7 @@ package com.sajotuna.account.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sajotuna.account.domain.dto.UserDto;
+import com.sajotuna.account.domain.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -31,10 +32,10 @@ public class TokenService {
         this.secretKey = env.getProperty("token.secret").getBytes(StandardCharsets.UTF_8);
     }
 
-    private String getToken(Claims claims, UserDto userDto, Long tokenExpires) {
+    private String getToken(Claims claims, User user, Long tokenExpires) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(String.valueOf(userDto.getId()))
+                .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + tokenExpires))
                 .signWith(getSigningKey(secretKey))
@@ -53,30 +54,21 @@ public class TokenService {
                 .compact();
     }
 
-    public String getAccessToken(Claims claims, UserDto userDto) {
-        return getToken(claims, userDto, ACCESS_TOKEN_EXPIRES);
+    public String getAccessToken(Claims claims, User user) {
+        return getToken(claims, user, ACCESS_TOKEN_EXPIRES);
     }
 
-    public String getRefreshToken(Claims claims, UserDto userDto) {
-        return getToken(claims, userDto, REFRESH_TOKEN_EXPIRES);
+    public String getRefreshToken(Claims claims, User user) {
+        return getToken(claims, user, REFRESH_TOKEN_EXPIRES);
     }
 
-    public void saveRefreshToken(String email, String refreshToken){
-        String key = "refresh_token:" + email;
+    public void saveRefreshToken(Long id, String refreshToken){
+        String key = "refresh_token:" + id;
         redisTemplate.opsForValue().set(key, refreshToken, 1, TimeUnit.DAYS);
     }
 
     public static Key getSigningKey(byte[] secretKey) {
         return Keys.hmacShaKeyFor(secretKey);
-    }
-
-    public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.get("email", String.class);
     }
 
 
