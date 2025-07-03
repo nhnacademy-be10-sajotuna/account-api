@@ -24,12 +24,12 @@ public class UserDto {
     private LocalDateTime currentLoginAt;
     private User.Role role;
 
-    public static User toUser(UserDto userDto, PasswordEncoder passwordEncoder) {
-        return User.ofUser(userDto.getName(), passwordEncoder.encode(userDto.getPassword()), userDto.getEmail(), userDto.getPhoneNumber(), userDto.getBirthDate());
+    public User toUser(PasswordEncoder passwordEncoder) {
+        return User.ofUser(getName(), passwordEncoder.encode(getPassword()), getEmail(), getPhoneNumber(), getBirthDate());
     }
 
-    public static User toAdmin(UserDto userDto, PasswordEncoder passwordEncoder) {
-        return User.ofAdmin(userDto.getName(), passwordEncoder.encode(userDto.getPassword()), userDto.getEmail(), userDto.getPhoneNumber(), userDto.getBirthDate());
+    public User toAdmin(PasswordEncoder passwordEncoder) {
+        return User.ofAdmin(getName(), passwordEncoder.encode(getPassword()), getEmail(), getPhoneNumber(), getBirthDate());
     }
 
     public static UserDto fromRequestUserLocal(RequestUser requestUser) {

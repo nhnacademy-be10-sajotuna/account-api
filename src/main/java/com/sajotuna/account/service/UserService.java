@@ -79,8 +79,7 @@ public class UserService{
                 String newName = UUID.randomUUID().toString();
                 email = newName +"@sajotuna.com";
                 User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
-                userRepository.save(newUser);
-                user = newUser;
+                user = userRepository.save(newUser);
             }
         }
         else {
@@ -117,7 +116,7 @@ public class UserService{
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyException(userDto.getEmail());
         }
-        User user = UserDto.toUser(userDto, passwordEncoder);
+        User user = userDto.toUser(passwordEncoder);
 
         User saveduser = userRepository.save(user);
         pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
