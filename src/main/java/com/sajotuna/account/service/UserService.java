@@ -73,6 +73,7 @@ public class UserService{
                     User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
                     userRepository.save(newUser);
                     user = newUser;
+                    pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
                 }
             }
             else {
@@ -80,6 +81,7 @@ public class UserService{
                 email = newName +"@sajotuna.com";
                 User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
                 user = userRepository.save(newUser);
+                pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
             }
         }
         else {
