@@ -79,7 +79,7 @@ public class UserService{
             else {
                 String newName = UUID.randomUUID().toString();
                 email = newName +"@sajotuna.com";
-                User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
+                User newUser = User.ofPayco(outId, newName, email, User.AuthType.PAYCO);
                 user = userRepository.save(newUser);
                 pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
             }
