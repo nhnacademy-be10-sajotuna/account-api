@@ -7,8 +7,8 @@ import com.sajotuna.account.domain.dto.UserDto;
 import com.sajotuna.account.domain.dto.UserGradePolicyDto;
 import com.sajotuna.account.domain.entity.User;
 import com.sajotuna.account.domain.request.PointEarnRequest;
+import com.sajotuna.account.domain.request.WelcomeCouponRequest;
 import com.sajotuna.account.domain.response.LoginResponse;
-import com.sajotuna.account.domain.response.ResponseUser;
 import com.sajotuna.account.domain.response.ResponseUserGradePolicy;
 import com.sajotuna.account.exception.UserAlreadyException;
 import com.sajotuna.account.exception.UserNotFoundException;
@@ -122,6 +122,7 @@ public class UserService{
 
         User saveduser = userRepository.save(user);
         pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
+        orderFeignClient.issueWelcomeCoupon(new WelcomeCouponRequest(user.getId()));
 
         if (address != null && !address.isBlank()) {
             AddressDto addressDto = new AddressDto();
