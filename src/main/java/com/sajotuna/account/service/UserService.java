@@ -111,7 +111,7 @@ public class UserService{
         String refreshToken = tokenService.getRefreshToken(claims, user);
 
         tokenService.saveRefreshToken(user.getId(), refreshToken);
-        return new LoginResponse(accessToken, refreshToken, user.getEmail(), user.getName());
+        return new LoginResponse(accessToken, refreshToken, user.getEmail(), user.getName(), user.getId());
     }
 
     public UserDto createUser(UserDto userDto, String address) {
