@@ -74,6 +74,7 @@ public class UserService{
                     userRepository.save(newUser);
                     user = newUser;
                     pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
+                    orderFeignClient.issueWelcomeCoupon(new WelcomeCouponRequest(user.getId()));
                 }
             }
             else {
@@ -82,6 +83,7 @@ public class UserService{
                 User newUser = User.ofPayco(outId, newName, email, User.AuthType.PAYCO);
                 user = userRepository.save(newUser);
                 pointMessageProducer.sendPointEarnRequest(new PointEarnRequest(user.getId(), PointEarnRequest.PointPolicyType.REGISTER));
+                orderFeignClient.issueWelcomeCoupon(new WelcomeCouponRequest(user.getId()));
             }
         }
         else {
