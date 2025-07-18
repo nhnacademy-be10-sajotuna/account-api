@@ -52,5 +52,10 @@ X-User-Id: 1
 ### 이번달 생일인 유저들 조회
 GET http://localhost:10362/api/users/birth
 
+### 토큰
+POST http://localhost:10362/api/token/refresh
+Content-Type: application/json
+AuthorizationRefresh: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMCIsImlhdCI6MTc1MjgxNzkzMCwiZXhwIjoxNzUyOTA0MzMwfQ.a69AfRXQx3JzE9ot28UNrTqHLCt4v-4kgV217thkdb0
+
 
 
