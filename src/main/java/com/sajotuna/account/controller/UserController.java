@@ -31,7 +31,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequestUser requestUser) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestUser requestUser) {
         LoginResponse loginResponse = userService.login(requestUser.getEmail(), requestUser.getPassword());
         return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
     }
