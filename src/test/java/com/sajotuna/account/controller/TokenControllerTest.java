@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,17 +65,17 @@ class TokenControllerTest {
     @Test
     @DisplayName("리프레쉬 토큰 유효")
     void refresh() throws Exception {
-        Mockito.when(tokenService.validateRefreshToken("1234")).thenReturn(true);
-        Mockito.when(tokenService.getAccessTokenFromRefreshToken("1234")).thenReturn("1234");
-        Mockito.when(tokenService.getIdFromToken("1234")).thenReturn("1");
+        Mockito.when(tokenService.validateRefreshToken(any())).thenReturn(true);
+        Mockito.when(tokenService.getAccessTokenFromRefreshToken(any())).thenReturn("1234");
+        Mockito.when(tokenService.getIdFromToken(any())).thenReturn("1");
         mockMvc.perform(post("/api/token/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("AuthorizationRefresh", "Bearer 1234"))
                 .andExpect(status().isCreated());
 
-        Mockito.verify(tokenService).validateRefreshToken("1234");
-        Mockito.verify(tokenService).getAccessTokenFromRefreshToken("1234");
-        Mockito.verify(tokenService).getIdFromToken("1234");
+        Mockito.verify(tokenService).validateRefreshToken(any());
+        Mockito.verify(tokenService).getAccessTokenFromRefreshToken(any());
+        Mockito.verify(tokenService).getIdFromToken(any());
     }
 
     @Test

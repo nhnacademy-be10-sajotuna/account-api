@@ -2,7 +2,6 @@ package com.sajotuna.account.feign;
 
 import com.sajotuna.account.domain.request.WelcomeCouponRequest;
 import com.sajotuna.account.domain.response.ResponseUserGradePolicy;
-import com.sajotuna.account.domain.response.UserCouponResponse;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,5 +15,5 @@ public interface OrderFeignClient {
     public ResponseUserGradePolicy getUserGradePolicy(@PathVariable Long userId);
 
     @PostMapping("/api/coupons/users/issue-welcome")
-    UserCouponResponse issueWelcomeCoupon(@RequestBody @Valid WelcomeCouponRequest welcomeCouponRequest);
+    void issueWelcomeCoupon(@RequestBody @Valid WelcomeCouponRequest welcomeCouponRequest);
 }

@@ -7,9 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@NoArgsConstructor
 @Getter
-@Setter
 public class ResponseUserGradePolicy {
     private Grade grade;
     private int minTotalOrderPrice;

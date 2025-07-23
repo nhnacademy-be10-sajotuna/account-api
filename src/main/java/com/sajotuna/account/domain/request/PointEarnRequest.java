@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @Getter
-@Setter
 public class PointEarnRequest {
     private Long userId;
     private PointPolicyType type;

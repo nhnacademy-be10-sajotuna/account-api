@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @Getter
-@Setter
 public class WelcomeCouponRequest {
     @NotNull
     private Long userId;
