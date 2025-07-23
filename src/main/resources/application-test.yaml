@@ -41,9 +41,6 @@ eureka:
   instance:
     prefer-ip-address: true
 
-token:
-  secret: testestestestestestestestestestestes
-
 logging:
   level:
     com.netflix.discovery: off
@@ -55,7 +52,3 @@ management:
     web:
       exposure:
         include: health,info
-
-cookie:
-  domain: ""
-  secure: false

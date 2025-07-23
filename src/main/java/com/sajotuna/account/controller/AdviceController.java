@@ -23,10 +23,4 @@ public class AdviceController {
         log.error("MethodArgumentNotValidException: {}", ex.getMessage(), ex);
         return ResponseEntity.status(ex.getStatusCode()).body(ex.getMessage());
     }
-
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<String> forbiddenException(ForbiddenException ex) {
-        log.error("ForbiddenException: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
-    }
 }

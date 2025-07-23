@@ -68,6 +68,7 @@ public class UserService{
                     }
                     savedUser.setOutId(outId);
                     savedUser.setAuthType(User.AuthType.PAYCO);
+                    user = savedUser;
                 }
                 else {
                     User newUser = User.ofPayco(outId, name, email, User.AuthType.PAYCO);
