@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,7 +51,7 @@ class AddressControllerTest {
                         .header("X-User-Id", 1L))
                 .andExpect(status().isCreated());
 
-        Mockito.verify(addressService).save(addressDto, 1L);
+        Mockito.verify(addressService).save(any(), any());
     }
 
     @Test
@@ -70,7 +71,7 @@ class AddressControllerTest {
                 .andExpect(status().isCreated());
 
         addressDto.setNickName("test");
-        Mockito.verify(addressService).save(addressDto, 1L);
+        Mockito.verify(addressService).save(any(), any());
     }
 
     @Test

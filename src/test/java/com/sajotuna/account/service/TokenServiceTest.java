@@ -75,6 +75,12 @@ class TokenServiceTest {
     }
 
     @Test
+    void testValidateRefreshToken_invalid() {
+        assertFalse(tokenService.validateRefreshToken(null));
+        assertFalse(tokenService.validateRefreshToken("invalid"));
+    }
+
+    @Test
     void testGetAccessTokenFromRefreshToken() {
         String refreshToken = tokenService.getRefreshToken(Jwts.claims().setSubject("0"), new User());
         String newAccessToken = tokenService.getAccessTokenFromRefreshToken(refreshToken);

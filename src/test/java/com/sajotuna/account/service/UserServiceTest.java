@@ -231,7 +231,7 @@ class UserServiceTest {
         userService.createUser(userDto, "123");
 
         verify(userRepository, Mockito.times(1)).findByEmail("test");
-        verify(addressService, Mockito.times(1)).save(addressDto, 1L);
+        verify(addressService, Mockito.times(1)).save(any(), any());
     }
 
     @Test

@@ -3,10 +3,13 @@ package com.sajotuna.account.domain.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 public class RequestEditUser {
     @NotNull(message = "이름은 비어 있으면 안됩니다.")
     private String name;

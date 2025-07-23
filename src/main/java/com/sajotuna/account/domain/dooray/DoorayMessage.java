@@ -21,15 +21,13 @@ public class DoorayMessage {
     }
 
     public DoorayMessage(String status, String email) {
-        if (status.equals("inactive")) {
-            this.botName = "team04.shop 봇.";
-            this.text = String.format("휴면 유저 %s", email);
-            this.attachments =  new DoorayMessage.Attachment[]{new DoorayMessage.Attachment(
-                    "인증되었습니다. ",
-                    "깨어났습니다 용사님",
-                    "http://naver.com",
-                    "https://static.dooray.com/static_images/dooray-bot.png",
-                    "red")};
-        }
+        this.botName = "team04.shop 봇.";
+        this.text = String.format("휴면 유저 %s", email);
+        this.attachments =  new DoorayMessage.Attachment[]{new DoorayMessage.Attachment(
+                "인증되었습니다. ",
+                "깨어났습니다 용사님",
+                "http://naver.com",
+                "https://static.dooray.com/static_images/dooray-bot.png",
+                "red")};
     }
 }

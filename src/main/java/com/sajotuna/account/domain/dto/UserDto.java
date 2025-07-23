@@ -2,6 +2,8 @@ package com.sajotuna.account.domain.dto;
 
 import com.sajotuna.account.domain.entity.User;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.sajotuna.account.domain.request.RequestUser;
 
@@ -9,7 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class UserDto {
     private long id;
     private UserGradePolicyDto userGradePolicyDto;

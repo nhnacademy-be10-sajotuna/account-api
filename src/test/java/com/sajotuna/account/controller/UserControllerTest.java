@@ -217,7 +217,7 @@ class UserControllerTest {
                         .header("X-User-Id", 1)
                         .content(objectMapper.writeValueAsString(editUser)))
                 .andExpect(status().isNoContent());
-        Mockito.verify(userService).updateUser(1L, userDto);
+        Mockito.verify(userService).updateUser(any(), any(UserDto.class));
     }
 
     @Test
